@@ -45,7 +45,11 @@
                 let endPoint = this.forRegistration ? 'register' : 'login';
                 return {
                     withUsernameAndPassword: () => {
-                        axios.post(`${this.authServerURI}/${endPoint}`, {username: this.username, password: this.password, device_name: 'Browser', device_secret: secret}).then(response => {
+                        let data = {username: this.username, password: this.password, device_name: 'Browser', device_secret: secret};
+
+                        if(this.forRegistration) data.email = this.email;
+
+                        axios.post(`${this.authServerURI}/${endPoint}`, data).then(response => {
                             if(response.data.error) this.onboardingError = response.data.error.message;
                            console.log(response.data);
                         }).catch(error => {
