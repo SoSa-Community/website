@@ -1,7 +1,19 @@
 <script>
     export default {
         name: 'TopNav',
-        props: {}
+        props: {},
+        data: () => {
+            return {
+                navItems: [
+                    {url: 'https://blog.sosa.net', icon:'fal fa-newspaper'},
+                    {url: 'https://facebook.com/SoSaCommunity', icon:'fab fa-facebook-f'},
+                    {url: 'https://twitter.com/ChatPlayShare', icon:'fab fa-twitter'},
+                    {url: 'https://youtube.com/c/ChatPlayShare', icon:'fab fa-youtube'},
+                    {url: 'https://steamcommunity.com/groups/chatplayshare', icon:'fab fa-steam'},
+                    {url: 'https://www.linkedin.com/company/sosa-community/', icon:'fab fa-linkedin'},
+                ]
+            }
+        }
     }
 </script>
 
@@ -29,28 +41,8 @@
 
         <b-collapse id="nav-collapse" is-nav>
             <b-navbar-nav class="ml-auto" id="navbar_right">
-                <b-nav-item href="https://blog.sosa.net">
-                    <i class="fal fa-newspaper"></i>
-                </b-nav-item>
-
-                <b-nav-item href="https://facebook.com/SoSaCommunity">
-                    <i class="fab fa-facebook-f"></i>
-                </b-nav-item>
-
-                <b-nav-item href="https://twitter.com/ChatPlayShare">
-                    <i class="fab fa-twitter"></i>
-                </b-nav-item>
-
-                <b-nav-item href="https://youtube.com/c/ChatPlayShare">
-                    <i class="fab fa-youtube"></i>
-                </b-nav-item>
-
-                <b-nav-item href="https://steamcommunity.com/groups/chatplayshare">
-                    <i class="fab fa-steam"></i>
-                </b-nav-item>
-
-                <b-nav-item href="https://www.linkedin.com/company/sosa-community/">
-                    <i class="fab fa-linkedin"></i>
+                <b-nav-item :href="item.url" v-for="item in navItems" :key="item.url">
+                    <i :class="item.icon"></i>
                 </b-nav-item>
             </b-navbar-nav>
 
