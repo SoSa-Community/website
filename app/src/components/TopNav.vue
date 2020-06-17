@@ -6,22 +6,10 @@
 </script>
 
 <style>
-   #login_button {
-       border-radius: 1.2rem;
-       cursor: pointer;
-       padding: .5rem 1rem;
-       font-size: 1.1rem;
-       line-height: 1;
-       color: #fff;
-    }
+    #login_button, #registration_button { border-radius: 1.2rem; }
     .navbar-brand h1{
         font-family: "koch_geometricmedium", "Myriad Pro", Arial;
     }
-
-    .navbar-nav{margin: .25em 0;}
-    #navbar_left .nav-item {margin-left: 0.5em;}
-
-    .nav-item .nav-link {padding: 0 1em;}
 
     #navbar_right .nav-item {
         margin-right: 0.5em;
@@ -65,7 +53,10 @@
                     <i class="fab fa-linkedin"></i>
                 </b-nav-item>
             </b-navbar-nav>
-            <a class="btn btn-outline-warning" id="login_button">Login</a>
+
+            <b-button v-b-modal.login_modal variant="success" id="login_button" class="mr-2 py-2 px-3">Login</b-button>
+            <b-button v-b-modal.register_modal variant="outline-warning" id="registration_button" class="py-2 px-3 text-white">New to SoSa?</b-button>
+
         </b-collapse>
     </b-navbar>
 </template>

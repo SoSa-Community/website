@@ -1,10 +1,12 @@
 <script>
 import TopNav from './components/TopNav.vue'
+import LoginRegistrationModal from "./components/LoginRegistrationModal";
 
 export default {
   name: 'App',
   components: {
-    TopNav
+    LoginRegistrationModal,
+    TopNav,
   }
 }
 </script>
@@ -57,6 +59,10 @@ export default {
   #top_container h2{
       font-size:1.25rem;
   }
+
+    a{
+        color: #7ac256 !important;
+    }
 </style>
 
 <template>
@@ -72,6 +78,8 @@ export default {
               </b-col>
           </div>
         </b-row>
+        <LoginRegistrationModal />
+        <LoginRegistrationModal :for-registration="true" />
     </b-container>
   </div>
 </template>
