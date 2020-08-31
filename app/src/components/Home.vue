@@ -5,9 +5,11 @@
 	export default {
 		name: 'Home',
 		props: {},
-		data: () => {},
 		components: {
 			TopNav, LoginRegistrationModal
+		},
+		mounted() {
+			console.log('blah',  this.$route.params);
 		}
 	}
 </script>

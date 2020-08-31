@@ -4,30 +4,19 @@
     let secret = [...Array(64)].map(i=>(~~(Math.random()*36)).toString(36)).join('');
     let images = require.context('../assets/onboarding/', false, /\.png$/);
 
-    let handlePreauth = (callback) => {
-        axios.post(`${process.env.VUE_APP_AUTH_SERVER_URI}/preauth/create`, {device_name: 'Browser', device_secret: secret}).then(response => {
-            if(response.data.error){
-                this.loginError = response.data.error.message;
-            }
-            else{
-                callback(response.data);
-            }
-
-        }).catch(error => {
-            console.error(error);
-        });
-    }
-
     export default {
         name: 'LoginRegistrationModal',
         props: {
-            forRegistration: Boolean
+            forRegistration: Boolean,
+            socialMediaError: String
         },
         data: () => {
             return {
                 username: '',
+                email: '',
                 password: '',
                 onboardingError: '',
+                onboardingLoading: false,
                 authServerURI: process.env.VUE_APP_AUTH_SERVER_URI,
                 socialNetworkLogins: [
                     {name: 'twitter', enabled: true},
@@ -46,24 +35,58 @@
                 return {
                     withUsernameAndPassword: () => {
                         let data = {username: this.username, password: this.password, device_name: 'Browser', device_secret: secret};
+                        this.onboardingLoading = true;
 
                         if(this.forRegistration) data.email = this.email;
 
-                        axios.post(`${this.authServerURI}/${endPoint}`, data).then(response => {
-                            if(response.data.error) this.onboardingError = response.data.error.message;
-                           console.log(response.data);
+                        const handleLoginResponse = (error) => {
+                            this.onboardingLoading = false;
+                            if(error){
+                                this.onboardingError = error.message;
+                            }else{
+                                this.$bvModal.hide(`${endPoint}_modal`);
+                                this.$router.push('/dashboard');
+                            }
+                        };
+
+                        axios.post(`${this.authServerURI}/${endPoint}`, data).then(onboardingResponse => {
+                            const {data: {error}} = onboardingResponse;
+                            handleLoginResponse(error);
                         }).catch(error => {
-                            console.error(error);
+                            handleLoginResponse(error);
                         });
                     },
                     with: (network) => {
-                        handlePreauth((data) => {
-                            window.location = `${this.authServerURI}/${network}/${endPoint}?app=1&preauth=${data.response}`;
+                        axios.post(`${process.env.VUE_APP_AUTH_SERVER_URI}/preauth/create`, {device_name: 'Browser', device_secret: 'sausage'}).then(preAuthResponse => {
+                            const {data: {error, response}} = preAuthResponse;
+                            if(error){
+                                this.loginError = error.message;
+                            }
+                            else{
+                                window.location = `${this.authServerURI}/${network}/${endPoint}?preauth=${response}`;
+                            }
+
+                        }).catch(error => {
+                            console.error(error);
                         });
                     }
                 }
             }
         },
+        mounted() {
+            const {preauthError} = this.$route.params;
+            if(preauthError){
+                this.onboardingError = preauthError;
+            }
+            const {name: routeName} = this.$route;
+
+            if(
+                    (this.forRegistration && routeName === 'register') ||
+                    (!this.forRegistration && routeName === 'login')
+            ){
+                this.$bvModal.show(`${routeName}_modal`);
+            }
+        }
     }
 </script>
 
@@ -162,7 +185,7 @@
                                     <a href="/forgot">Forgot password</a>
                                 </b-col>
                                 <b-col :cols="(!forRegistration?8:12)" :class="'p-0' + (!forRegistration? ' pl-1' : '')">
-                                    <b-button type="submit" variant="success" class="w-100" v-on:click="onboard().withUsernameAndPassword()">Let me in!</b-button>
+                                    <b-button type="submit" variant="success" class="w-100" v-on:click="onboard().withUsernameAndPassword()">Let me in! <b-spinner small v-if="onboardingLoading"></b-spinner></b-button>
                                 </b-col>
                             </b-row>
                         </b-form-group>
